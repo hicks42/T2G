@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controller;
+namespace App\Controller\Security;
 
 use App\Entity\User;
 use App\Form\ChangePasswordFormType;
@@ -165,7 +165,7 @@ class ResetPasswordController extends AbstractController
         }
 
         $email = (new TemplatedEmail())
-            ->from(new Address('Noreply@usygec.fr', 'Usygec Mail Bot'))
+            ->from(new Address('noreply@usygec.fr', 'Usygec Mail Bot'))
             ->to($user->getEmail())
             ->subject('Your password reset request')
             ->htmlTemplate('security/reset_password/email.html.twig')
