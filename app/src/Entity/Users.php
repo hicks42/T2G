@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UsersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -51,6 +53,16 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
      * @ORM\Column(type="boolean")
      */
     private $isVerified = false;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Attendants::class, mappedBy="user")
+     */
+    private $attendants;
+
+    public function __construct()
+    {
+        $this->attendants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -173,6 +185,36 @@ class Users implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsVerified(bool $isVerified): self
     {
         $this->isVerified = $isVerified;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Attendants>
+     */
+    public function getAttendants(): Collection
+    {
+        return $this->attendants;
+    }
+
+    public function addAttendant(Attendants $attendant): self
+    {
+        if (!$this->attendants->contains($attendant)) {
+            $this->attendants[] = $attendant;
+            $attendant->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAttendant(Attendants $attendant): self
+    {
+        if ($this->attendants->removeElement($attendant)) {
+            // set the owning side to null (unless already changed)
+            if ($attendant->getUser() === $this) {
+                $attendant->setUser(null);
+            }
+        }
 
         return $this;
     }
